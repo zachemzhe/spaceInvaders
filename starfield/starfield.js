@@ -1,8 +1,11 @@
-import { runInThisContext } from 'vm';
 import './starfield.scss'
 
+function randColor() {
+	return '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
+}
+
 function Starfield() {
-	this.fps = 1;
+	this.fps = 30;
 	this.canvas = null;
 	this.width = 0;
 	this.height = 0;
@@ -101,19 +104,15 @@ Starfield.prototype.draw = function () {
 		context.fillRect(star.x, star.y, star.size, star.size);
 	}
 
-	function randColor() {
-		return '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6);
-	}
-
 	for (let i = 0; i < this.planets.length; i++) {
 		let planet = this.planets[i];
 		let randX = [planet.x, planet.x + planet.radius];
 		let randY = [planet.y, planet.y + planet.radius];
-		let randomX = randX[Math.floor(Math.random() * randX.length)];
-		let randomY = randY[Math.floor(Math.random() * randY.length)];
+		let randomX = randX[planet.randXSeed];
+		let randomY = randY[planet.randYSeed];
 		let gradient = context.createLinearGradient(planet.x, planet.y, randomX, randomY);
-		gradient.addColorStop(0, randColor());
-		gradient.addColorStop(0.5, randColor());
+		gradient.addColorStop(0, planet.randColor1);
+		gradient.addColorStop(0.5, planet.randColor2);
 		// gradient.addColorStop(0.51, randColor());
 		// gradient.addColorStop(1, randColor());
 		context.fillStyle = gradient;
@@ -138,6 +137,10 @@ function Planet(x, y, radius, startAngle, endAngle, velocity) {
 	this.startAngle = startAngle;
 	this.endAngle = endAngle;
 	this.velocity = velocity;
+	this.randXSeed = Math.floor(Math.random() * 2)
+	this.randYSeed = Math.floor(Math.random() * 2)
+	this.randColor1 = randColor()
+	this.randColor2 = randColor()
 }
 
 

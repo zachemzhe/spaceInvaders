@@ -66,4 +66,27 @@ Game.prototype.moveToState = function (state) {
 
 	//  Set the current state.
 	this.stateStack.push(state);
+};
+
+Game.prototype.pushState = function (state) {
+
+	//  If there's an enter function for the new state, call it.
+	if (state.enter) {
+		state.enter(game);
+	}
+	//  Set the current state.
+	this.stateStack.push(state);
+};
+
+Game.prototype.popState = function () {
+
+	//  Leave and pop the state.
+	if (this.currentState()) {
+		if (this.currentState().leave) {
+			this.currentState().leave(game);
+		}
+
+		//  Set the current state.
+		this.stateStack.pop();
+	}
 }; 
